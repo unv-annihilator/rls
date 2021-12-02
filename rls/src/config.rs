@@ -122,6 +122,9 @@ pub fn unstable_features_allowed() -> bool {
 #[allow(missing_docs)]
 #[serde(default)]
 pub struct Config {
+    /// Release channel used in docs urls. EX: `stable` https://doc.rust-lang.org/stable/std/index.html
+    /// Default: `nightly`
+    pub docs_release_channel: String,
     pub sysroot: Option<String>,
     pub target: Option<String>,
     pub rustflags: Option<String>,
@@ -180,6 +183,7 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Config {
         let mut result = Config {
+            docs_release_channel: "nightly".to_owned(),
             sysroot: None,
             target: None,
             rustflags: None,

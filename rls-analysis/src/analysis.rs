@@ -240,7 +240,7 @@ impl Analysis {
             aliased_imports: HashSet::new(),
             crate_names: HashMap::new(),
             // TODO don't hardcode these
-            doc_url_base: "https://doc.rust-lang.org/nightly".to_owned(),
+            doc_url_base: "https://doc.rust-lang.org".to_owned(),
             src_url_base: "https://github.com/rust-lang/rust/blob/master".to_owned(),
         }
     }

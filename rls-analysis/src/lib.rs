@@ -442,11 +442,11 @@ impl<L: AnalysisLoader> AnalysisHost<L> {
         })
     }
 
-    pub fn doc_url(&self, span: &Span) -> AResult<String> {
+    pub fn doc_url(&self, span: &Span, docs_channel: &str) -> AResult<String> {
         // e.g., https://doc.rust-lang.org/nightly/std/string/String.t.html
         self.with_analysis(|a| {
             a.def_id_for_span(span).and_then(|id| {
-                a.with_defs_and_then(id, |def| AnalysisHost::<L>::mk_doc_url(def, a))
+                a.with_defs_and_then(id, |def| AnalysisHost::<L>::mk_doc_url(def, a, docs_channel))
             })
         })
     }
@@ -477,7 +477,7 @@ impl<L: AnalysisLoader> AnalysisHost<L> {
         }
     }
 
-    fn mk_doc_url(def: &Def, analysis: &Analysis) -> Option<String> {
+    fn mk_doc_url(def: &Def, analysis: &Analysis, docs_channel: &str) -> Option<String> {
         if !def.distro_crate {
             return None;
         }
@@ -495,7 +495,7 @@ impl<L: AnalysisLoader> AnalysisHost<L> {
                 | DefKind::TupleVariant
                 | DefKind::StructVariant => {
                     let ns = name_space_for_def_kind(def.kind);
-                    let mut res = AnalysisHost::<L>::mk_doc_url(parent, analysis)
+                    let mut res = AnalysisHost::<L>::mk_doc_url(parent, analysis, docs_channel)
                         .unwrap_or_else(|| "".into());
                     res.push_str(&format!("#{}.{}", def.name, ns));
                     res
@@ -503,8 +503,9 @@ impl<L: AnalysisLoader> AnalysisHost<L> {
                 DefKind::Mod => {
                     let parent_qualpath = parent.qualname.replace("::", "/");
                     format!(
-                        "{}/{}/{}/",
+                        "{}/{}/{}/{}/",
                         analysis.doc_url_base,
+                        docs_channel,
                         parent_qualpath.trim_end_matches('/'),
                         def.name,
                     )
@@ -513,15 +514,17 @@ impl<L: AnalysisLoader> AnalysisHost<L> {
                     let parent_qualpath = parent.qualname.replace("::", "/");
                     let ns = name_space_for_def_kind(def.kind);
                     format!(
-                        "{}/{}/{}.{}.html",
-                        analysis.doc_url_base, parent_qualpath, def.name, ns,
+                        "{}/{}/{}/{}.{}.html",
+                        analysis.doc_url_base, docs_channel, parent_qualpath, def.name, ns,
                     )
                 }
             }),
             None => {
                 let qualpath = def.qualname.replace("::", "/");
                 let ns = name_space_for_def_kind(def.kind);
-                Some(format!("{}/{}.{}.html", analysis.doc_url_base, qualpath, ns,))
+                Some(
+                    format!("{}/{}/{}.{}.html", analysis.doc_url_base, docs_channel, qualpath, ns,),
+                )
             }
         }
     }

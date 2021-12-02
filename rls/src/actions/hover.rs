@@ -832,7 +832,8 @@ pub fn tooltip(
         }
     });
 
-    let doc_url = analysis.doc_url(&hover_span).ok();
+    let docs_release_channel = ctx.config.lock().unwrap().docs_release_channel.clone();
+    let doc_url = analysis.doc_url(&hover_span, &docs_release_channel).ok();
 
     let contents = if let Ok(def) = hover_span_def {
         if def.kind == DefKind::Local && def.span == hover_span && def.qualname.contains('$') {

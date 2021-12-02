@@ -42,6 +42,7 @@ fn doc_urls_resolve_correctly() {
         host: &AnalysisHost<TestAnalysisLoader>,
         type_: &str,
         qualname: S,
+        docs_channel: &str,
         url: &str,
     ) {
         let qualname = qualname.into();
@@ -53,7 +54,7 @@ fn doc_urls_resolve_correctly() {
             .collect();
         trace!("{}: {:#?}", type_, defs);
         assert_eq!(defs.len(), 1);
-        assert_eq!(host.doc_url(&defs[0].span), Ok(url.into()));
+        assert_eq!(host.doc_url(&defs[0].span, docs_channel), Ok(url.into()));
     }
 
     // FIXME This test cannot work for some values
@@ -65,6 +66,7 @@ fn doc_urls_resolve_correctly() {
         &host,
         "MAIN_SEPARATOR",
         None,
+        "nightly",
         "https://doc.rust-lang.org/nightly/std/path/MAIN_SEPARATOR.v.html",
     );
     // the parent has a qualname which is not represented in the usage, the ip part
@@ -72,54 +74,63 @@ fn doc_urls_resolve_correctly() {
         &host,
         "Ipv4Addr",
         None,
+        "nightly",
         "https://doc.rust-lang.org/nightly/std/net/ip/Ipv4Addr.t.html",
     );
     assert_url_for_type(
         &host,
         "VarError",
         None,
+        "nightly",
         "https://doc.rust-lang.org/nightly/std/env/VarError.t.html",
     );
     assert_url_for_type(
         &host,
         "NotPresent",
         None,
+        "nightly",
         "https://doc.rust-lang.org/nightly/std/env/VarError.t.html#NotPresent.v",
     );
     assert_url_for_type(
         &host,
         "Result",
         "std::thread::Result",
+        "nightly",
         "https://doc.rust-lang.org/nightly/std/thread/Result.t.html",
     );
     assert_url_for_type(
         &host,
         "args",
         "std::env::args",
+        "nightly",
         "https://doc.rust-lang.org/nightly/std/env/args.v.html",
     );
     assert_url_for_type(
         &host,
         "AsciiExt",
         None,
+        "nightly",
         "https://doc.rust-lang.org/nightly/std/ascii/AsciiExt.t.html",
     );
     assert_url_for_type(
         &host,
         "is_ascii",
         "std::ascii::AsciiExt::is_ascii",
+        "nightly",
         "https://doc.rust-lang.org/nightly/std/ascii/AsciiExt.t.html#is_ascii.v",
     );
     assert_url_for_type(
         &host,
         "status",
         "std::process::Output::status",
+        "nightly",
         "https://doc.rust-lang.org/nightly/std/process/Output.t.html#status.v",
     );
     assert_url_for_type(
         &host,
         "copy",
         "std::fs::copy",
+        "nightly",
         "https://doc.rust-lang.org/nightly/std/fs/copy.v.html",
     );
     // prelude and fs are both mod, but the parent once has a trailing / and once not
@@ -127,9 +138,26 @@ fn doc_urls_resolve_correctly() {
         &host,
         "prelude",
         "std::io::prelude",
+        "nightly",
         "https://doc.rust-lang.org/nightly/std/io/prelude/",
     );
-    assert_url_for_type(&host, "fs", "std::fs", "https://doc.rust-lang.org/nightly/std/fs/");
+    assert_url_for_type(
+        &host,
+        "fs",
+        "std::fs",
+        "nightly",
+        "https://doc.rust-lang.org/nightly/std/fs/",
+    );
+    // Stable test
+    assert_url_for_type(
+        &host,
+        "fs",
+        "std::fs",
+        "stable",
+        "https://doc.rust-lang.org/stable/std/fs/",
+    );
+    // Beta test
+    assert_url_for_type(&host, "fs", "std::fs", "beta", "https://doc.rust-lang.org/beta/std/fs/");
 }
 
 #[test]
