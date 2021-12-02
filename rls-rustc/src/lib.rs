@@ -1,6 +1,7 @@
 #![feature(rustc_private)]
 
-extern crate env_logger;
+#[macro_use]
+extern crate log;
 extern crate rustc_driver;
 extern crate rustc_interface;
 extern crate rustc_save_analysis;
@@ -146,7 +147,7 @@ impl Callbacks for ShimCalls {
         }
 
         if let Err(e) = futures::executor::block_on(callbacks.input_files(input_files)) {
-            log::error!("Can't send input files as part of a compilation callback: {:?}", e);
+            error!("Can't send input files as part of a compilation callback: {:?}", e);
         }
 
         Compilation::Continue
@@ -193,7 +194,7 @@ impl Callbacks for ShimCalls {
                         if let Err(e) =
                             futures::executor::block_on(callbacks.complete_analysis(analysis))
                         {
-                            log::error!(
+                            error!(
                                 "Can't send analysis as part of a compilation callback: {:?}",
                                 e
                             );
