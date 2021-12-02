@@ -679,7 +679,15 @@ fn client_dependency_typo_and_fix() {
     let diag = rls.wait_for_diagnostics();
     assert_eq!(diag.diagnostics.len(), 1);
     assert_eq!(diag.diagnostics[0].severity, Some(DiagnosticSeverity::Error));
-    assert!(diag.diagnostics[0].message.contains("no matching package named `auto-cfg`"));
+    // Error Message will differ now based on whether there are canidates to compare against:
+    //      Caused By: https://github.com/rust-lang/cargo/commit/e94199cb0619d604981f10570845e774b449c2e5
+    // Could likely remove the old "no matching package named `auto-cfg`" check
+    assert!(
+        diag.diagnostics[0].message.contains("no matching package named `auto-cfg`")
+            || diag.diagnostics[0]
+                .message
+                .contains("no matching package found\nsearched package name: `auto-cfg`")
+    );
 
     let change_manifest = |contents: &str| {
         std::fs::write(root_path.join("Cargo.toml"), contents).unwrap();

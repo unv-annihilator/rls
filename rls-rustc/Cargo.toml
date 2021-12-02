@@ -9,10 +9,13 @@ repository = "https://github.com/rust-lang/rls"
 categories = ["development-tools"]
 
 [dependencies]
-env_logger = "0.7"
+# Using Regex now to avoid error: can't find crate for `std`'; 
+# due to removal of 'std' from env_logger's regex dependency
+regex = "1"
+env_logger = "0.9"
 log = "0.4"
-rand = "0.7"
-clippy_lints = { git = "https://github.com/rust-lang/rust-clippy", rev = "a55912c48e4ac08c0ac39a2d562b44699fa20d4d", optional = true }
+rand = "0.8"
+clippy_lints = { git = "https://github.com/rust-lang/rust-clippy", rev = "8ad56c8fb72e38ff991d932da6a0acf91c0128ba", optional = true }
 tokio = { version = "1", optional = true }
 futures = { version = "0.3", optional = true }
 serde = { version = "1", features = ["derive"], optional = true }

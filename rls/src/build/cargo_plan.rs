@@ -419,7 +419,7 @@ impl PackageMap {
             .iter()
             .flat_map(|meta| meta.workspace_members.iter().map(move |id| &meta[id]))
             .filter_map(|pkg| {
-                let dir = pkg.manifest_path.parent()?.to_path_buf();
+                let dir = pkg.manifest_path.parent()?.to_path_buf().into_std_path_buf();
                 Some((dir, pkg.name.clone()))
             })
             .collect()
