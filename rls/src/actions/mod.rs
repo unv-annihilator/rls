@@ -239,10 +239,11 @@ impl InitActionContext {
             fn load_file(&self, path: &Path) -> io::Result<String> {
                 match self.0.load_file(path) {
                     Ok(FileContents::Text(t)) => Ok(t),
-                    Ok(FileContents::Binary(_)) => {
-                        Err(io::Error::new(io::ErrorKind::Other, rls_vfs::Error::BadFileKind))
-                    }
-                    Err(err) => Err(io::Error::new(io::ErrorKind::Other, err)),
+                    Ok(FileContents::Binary(_)) => Err(io::Error::new(
+                        io::ErrorKind::Other,
+                        rls_vfs::Error::BadFileKind.to_string(),
+                    )),
+                    Err(err) => Err(io::Error::new(io::ErrorKind::Other, err.to_string())),
                 }
             }
         }

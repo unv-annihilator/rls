@@ -54,7 +54,7 @@ pub struct Id {
 #[cfg_attr(feature = "derive", derive(Serialize, Deserialize))]
 pub struct GlobalCrateId {
     pub name: String,
-    pub disambiguator: (u64, u64),
+    pub disambiguator: u64,
 }
 
 #[derive(Debug, Clone)]

@@ -184,8 +184,11 @@ fn format_internal(input: String, config: Config) -> Result<String, Error> {
 fn random_file() -> Result<(File, PathBuf), Error> {
     const SUFFIX_LEN: usize = 10;
 
-    let suffix: String =
-        thread_rng().sample_iter(&distributions::Alphanumeric).take(SUFFIX_LEN).collect();
+    let suffix: String = thread_rng()
+        .sample_iter(&distributions::Alphanumeric)
+        .map(char::from)
+        .take(SUFFIX_LEN)
+        .collect();
     let path = temp_dir().join(suffix);
 
     Ok(File::create(&path).map(|file| (file, path))?)
